@@ -1,0 +1,213 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "公司财务拆分 Agent 工作流",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "animation": "none"
+  },
+  "lanes": [
+    {
+      "id": "source",
+      "label": "数据源"
+    },
+    {
+      "id": "spec",
+      "label": "作业说明书"
+    },
+    {
+      "id": "pipeline",
+      "label": "处理管线"
+    },
+    {
+      "id": "review",
+      "label": "复核与交付"
+    }
+  ],
+  "phases": [
+    {
+      "id": "prep",
+      "label": "人工跑通与规则沉淀",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "build",
+      "label": "Agent 设计与实现",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "deliver",
+      "label": "复核与交付",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "filings",
+    "archive",
+    "middle",
+    "output",
+    "ai_review",
+    "human_review"
+  ],
+  "nodes": [
+    {
+      "id": "filings",
+      "lane": "source",
+      "col": 0,
+      "width": 140,
+      "type": "external",
+      "label": "披露文件取数",
+      "sublabel": "年报/半年报/招股书"
+    },
+    {
+      "id": "manual",
+      "lane": "spec",
+      "col": 1,
+      "width": 140,
+      "type": "security",
+      "label": "人工跑通",
+      "sublabel": "口径与格式规范"
+    },
+    {
+      "id": "spec_md",
+      "lane": "spec",
+      "col": 3,
+      "width": 140,
+      "type": "security",
+      "label": "作业说明书",
+      "sublabel": "AGENTS.md"
+    },
+    {
+      "id": "archive",
+      "lane": "pipeline",
+      "col": 1,
+      "width": 140,
+      "type": "database",
+      "label": "项目文件夹归档",
+      "sublabel": "按公司/期间存放"
+    },
+    {
+      "id": "middle",
+      "lane": "pipeline",
+      "col": 2,
+      "width": 140,
+      "type": "backend",
+      "label": "中间表提取",
+      "sublabel": "行业/产品/地区"
+    },
+    {
+      "id": "output",
+      "lane": "pipeline",
+      "col": 3,
+      "width": 140,
+      "type": "backend",
+      "label": "成品表灌入",
+      "sublabel": "脚本写入模板"
+    },
+    {
+      "id": "ai_review",
+      "lane": "review",
+      "col": 4,
+      "width": 140,
+      "type": "backend",
+      "label": "AI 复核审查",
+      "sublabel": "格式与数据对账"
+    },
+    {
+      "id": "human_review",
+      "lane": "review",
+      "col": 5,
+      "width": 140,
+      "type": "frontend",
+      "label": "人工终审",
+      "sublabel": "逐项过一遍后交付"
+    }
+  ],
+  "edges": [
+    {
+      "from": "filings",
+      "to": "archive",
+      "label": "抓取下载",
+      "variant": "emphasis"
+    },
+    {
+      "from": "manual",
+      "to": "spec_md",
+      "label": "沉淀为可执行步骤"
+    },
+    {
+      "from": "spec_md",
+      "to": "middle",
+      "label": "指导提取",
+      "variant": "dashed"
+    },
+    {
+      "from": "spec_md",
+      "to": "output",
+      "label": "约束输出",
+      "variant": "dashed"
+    },
+    {
+      "from": "spec_md",
+      "to": "ai_review",
+      "label": "定义复核标准",
+      "variant": "dashed"
+    },
+    {
+      "from": "archive",
+      "to": "middle",
+      "label": "AI 提取",
+      "variant": "emphasis"
+    },
+    {
+      "from": "middle",
+      "to": "output",
+      "label": "脚本灌入",
+      "variant": "emphasis"
+    },
+    {
+      "from": "output",
+      "to": "ai_review",
+      "label": "全链路自检",
+      "variant": "emphasis"
+    },
+    {
+      "from": "ai_review",
+      "to": "human_review",
+      "label": "修正后送审",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "规则先于自动化",
+      "items": [
+        "前几家公司由人工完整实操，摸清披露口径差异与格式规范",
+        "作业标准沉淀为可复用清单，再交给 Agent 执行"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "一条固定管线",
+      "items": [
+        "披露文件与终端数据归档 → 中间表提取 → 成品表灌入，步骤与目录固定",
+        "换一家公司只替换数据源，规则与脚本不动"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "两道复核",
+      "items": [
+        "AI 复核做格式与数据对账自检，问题就地修正",
+        "人工终审逐项过一遍，确认无误后才交付"
+      ]
+    }
+  ]
+}
